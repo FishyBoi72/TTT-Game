@@ -1,7 +1,7 @@
 // Importing the useState hook from React
 import { useState } from 'react';
 
-// Functional component for Square, taking value and onSquareClick as props
+// Functional component for rendering each square of the board
 function Square({ value, onSquareClick }) {
   return (
     // Rendering a button with a class "square" and onClick event handler
@@ -12,7 +12,7 @@ function Square({ value, onSquareClick }) {
   );
 }
 
-// Functional component for Board, taking xIsNext, squares, and onPlay as props
+// Functional component for rendering the game board
 function Board({ xIsNext, squares, onPlay }) {
   // Function to handle click events on squares
   function handleClick(i) {
@@ -76,6 +76,7 @@ export default function Game() {
   const xIsNext = currentMove % 2 === 0;
   // Get the current state of the board
   const currentSquares = history[currentMove];
+}
 
   // Function to handle playing a move
   function handlePlay(nextSquares) {
@@ -98,34 +99,48 @@ export default function Game() {
   }
 
   // Map over the history to create a list of move buttons
-  const moves = history.map((squares, move) => {
-    let description;
-    if (move > 0) {
-      description = 'Go to move #' + move;
-    } else {
-      description = 'Go to game start';
-    }
-    return (
-      <li key={move}>
-        {/* Button to jump to the specific move */}
-        <button onClick={() => jumpTo(move)}>{description}</button>
-      </li>
-    );
-  });
+const moves = history.map((squares, move) => {
+  // Initialize a variable to hold the description for each move button
+  let description;
+  
+  // Determine the description based on the move index
+  if (move > 0) {
+    description = 'Go to move #' + move; // If move > 0, display 'Go to move #N'
+  } else {
+    description = 'Go to game start'; // Otherwise, display 'Go to game start' for the first move
+  }
+  
+  // Return JSX for each move button
+  return (
+    <li key={move}>
+      {/* Button to jump to the specific move */}
+      <button onClick={() => jumpTo(move)}>{description}</button>
+    </li>
+  );
+});
+
 
   // Render the game layout with the board, move history, and reset button
-  return (
-    <div className="game">
-      <div className="game-board">
-        <Board xIsNext={xIsNext} squares={currentSquares} onPlay={handlePlay} />
-        <button onClick={handleReset}>Reset Game</button>
-      </div>
-      <div className="game-info">
-        <ol>{moves}</ol>
-      </div>
+return (
+  // Outermost div representing the entire game interface
+  <div className="game">
+    {/* Section for the game board and related controls */}
+    <div className="game-board">
+      {/* Render the Board component with specific props */}
+      <Board xIsNext={xIsNext} squares={currentSquares} onPlay={handlePlay} />
+      
+      {/* Button to reset the game when clicked */}
+      <button onClick={handleReset}>Reset Game</button>
     </div>
-  );
-}
+    
+    {/* Section for displaying game information and history */}
+    <div className="game-info">
+      {/* Ordered list to display the list of move buttons */}
+      <ol>{moves}</ol>
+    </div>
+  </div>
+);
+
 
 // Function to calculate the winner of the game
 function calculateWinner(squares) {
